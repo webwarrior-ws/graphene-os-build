@@ -1,0 +1,25 @@
+name: build-graphene-os
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apt install repo yarnpkg zip rsync
+          export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin
+
+      - name: Download source code (dev branch)
+        run: |
+          mkdir grapheneos-14
+          cd grapheneos-14
+          repo init -u https://github.com/GrapheneOS/platform_manifest.git -b 14
+          repo sync -j8
