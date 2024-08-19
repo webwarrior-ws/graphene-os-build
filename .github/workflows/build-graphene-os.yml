@@ -1,15 +1,13 @@
 name: build-graphene-os
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
+    container: 
+      image: kylemanna/aosp
 
     steps:
       - name: Install dependencies
