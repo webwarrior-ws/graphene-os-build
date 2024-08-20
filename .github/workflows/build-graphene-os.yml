@@ -10,10 +10,11 @@ jobs:
       image: kylemanna/aosp
 
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt install repo yarnpkg zip rsync
-          export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin
+      - name: Include sbin in PATH
+        run: export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin
+        
+      - name: Check Python version 
+        run: python --version
 
       - name: Download source code (dev branch)
         run: |
