@@ -7,14 +7,17 @@ jobs:
   build:
     runs-on: self-hosted
     container: 
-      image: kylemanna/aosp
+      image: ubuntu:22.04
 
     steps:
       - name: Include sbin in PATH
         run: export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin
         
-      - name: Check Python version 
-        run: python --version
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt update
+          apt install -y repo yarnpkg zip rsync python3 git gnupg
 
       - name: Download source code (dev branch)
         run: |
