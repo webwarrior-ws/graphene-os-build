@@ -34,7 +34,8 @@ jobs:
         run: |
           git clone https://github.com/GrapheneOS/Vanadium.git
           cd Vanadium
-          git checkout <CORRECT_BRANCH_OR_TAG>
+          # use main branch
+          git checkout main
           
       - name: Generate a signing key for Vanadium
         run: |
