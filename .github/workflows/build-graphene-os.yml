@@ -3,6 +3,10 @@ name: build-graphene-os
 on:
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: self-hosted
@@ -30,7 +34,7 @@ jobs:
           
       - name: Build GrapheneOS
         run: |
-          source build/envsetup.sh
+          source build/envsetup.sh # source: not found
           # target x64 Android emulator
           lunch sdk_phone64_x86_64-cur-user
           # build default target (as recommended for emulator builds)
