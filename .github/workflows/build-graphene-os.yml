@@ -34,6 +34,7 @@ jobs:
           
       - name: Build GrapheneOS
         run: |
+          cd grapheneos-14
           source build/envsetup.sh # source: not found
           # target x64 Android emulator
           lunch sdk_phone64_x86_64-cur-user
