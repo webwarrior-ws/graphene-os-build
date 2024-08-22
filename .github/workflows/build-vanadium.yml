@@ -1,0 +1,67 @@
+name: build-vanadium
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: self-hosted
+    container: 
+      image: ubuntu:22.04
+      
+    timeout-minutes: 360
+    
+    env:
+      ANDROID_VESION: 13
+
+    steps:
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt update
+          apt install -y python3 git
+          
+      - name: Install depot_tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          export PATH="$PATH:/path/to/depot_tools"
+
+      - name: Download Vanadium source code
+        run: |
+          git clone https://github.com/GrapheneOS/Vanadium.git
+          cd Vanadium
+          git checkout <CORRECT_BRANCH_OR_TAG>
+          
+      - name: Generate a signing key for Vanadium
+        run: |
+          cd Vanadium
+          # > You will be prompted to enter a password which will be requested by the generate-release.sh script for signing releases.
+          # how do I pass a password non-intractively?
+          keytool -genkey -v -keystore vanadium.keystore -storetype pkcs12 -alias vanadium -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -validity 10000 -dname "cn=GrapheneOS"
+        
+      - name: Fetch the Chromium sources
+        run: |
+          cd Vanadium
+          fetch --nohooks android
+        
+      - name: Build Vanadium
+        run: |
+          # Sync to the latest stable release for Android
+          cd Vanadium/src
+          git fetch --tags
+          git checkout $ANDROID_VESION
+          # Apply the GrapheneOS patches on top of the tagged release
+          git am --whitespace=nowarn --keep-non-patch ../patches/*.patch
+          # Sync submodules and obtain build dependencies
+          gclient sync -D --with_branch_heads --with_tags --jobs 32
+          # configure the build in the src directory
+          gn args out/Default
+          
+          # at this point I'm not sure I understand further build instructions
+          echo "Contents of ../args.gn:"
+          cat ../args.gn
+          
