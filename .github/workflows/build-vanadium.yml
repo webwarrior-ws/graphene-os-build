@@ -29,7 +29,6 @@ jobs:
         run: |
           cd /opt
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-          export PATH="$PATH:/opt/depot_tools"
 
       - name: Download Vanadium source code
         run: |
@@ -41,6 +40,7 @@ jobs:
       - name: Generate a signing key for Vanadium
         run: |
           cd Vanadium
+          export PATH="$PATH:/opt/depot_tools"
           # TODO: use Github actions secret
           export KEY_PASSWORD=password
           keytool -genkey -v -keystore vanadium.keystore -keypass $KEY_PASSWORD -storepass $KEY_PASSWORD -storetype pkcs12 -alias vanadium -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -validity 10000 -dname "cn=GrapheneOS"
@@ -48,13 +48,14 @@ jobs:
       - name: Fetch the Chromium sources
         run: |
           cd Vanadium
-          ls /opt/depot_tools/fetch
+          export PATH="$PATH:/opt/depot_tools"
           fetch --nohooks android
         
       - name: Build Vanadium
         run: |
           # Sync to the latest stable release for Android
           cd Vanadium/src
+          export PATH="$PATH:/opt/depot_tools"
           git fetch --tags
           git checkout $ANDROID_VESION
           # Apply the GrapheneOS patches on top of the tagged release
