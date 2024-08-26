@@ -16,7 +16,9 @@ jobs:
     timeout-minutes: 600
     
     env:
-      ANDROID_VESION: 13
+      # must correspond to existing tag in https://chromium.googlesource.com/chromium/src/+refs and https://github.com/GrapheneOS/Vanadium/tags respectively
+      CHROMIUM_VERSION: 128.0.6613.88
+      VANADIUM_VERSION: 128.0.6613.88.1
 
     steps:
       - name: Install dependencies
@@ -35,7 +37,7 @@ jobs:
           git clone https://github.com/GrapheneOS/Vanadium.git
           cd Vanadium
           # use main branch
-          git checkout main
+          git checkout $VANADIUM_VERSION
           
       - name: Generate a signing key for Vanadium
         run: |
@@ -57,7 +59,7 @@ jobs:
           cd Vanadium/src
           export PATH="$PATH:/opt/depot_tools"
           git fetch --tags
-          git checkout $ANDROID_VESION
+          git checkout $CHROMIUM_VERSION
           # Apply the GrapheneOS patches on top of the tagged release
           git am --whitespace=nowarn --keep-non-patch ../patches/*.patch
           # Sync submodules and obtain build dependencies
