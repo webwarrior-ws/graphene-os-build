@@ -13,7 +13,7 @@ jobs:
     container: 
       image: ubuntu:22.04
       
-    timeout-minutes: 360
+    timeout-minutes: 600
     
     env:
       ANDROID_VESION: 13
@@ -23,7 +23,7 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          apt install -y python3 git
+          apt install -y python3 git openjdk-8-jre-headless
           
       - name: Install depot_tools
         run: |
