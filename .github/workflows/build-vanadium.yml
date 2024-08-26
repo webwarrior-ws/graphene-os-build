@@ -41,13 +41,14 @@ jobs:
       - name: Generate a signing key for Vanadium
         run: |
           cd Vanadium
-          # > You will be prompted to enter a password which will be requested by the generate-release.sh script for signing releases.
-          # how do I pass a password non-intractively?
-          keytool -genkey -v -keystore vanadium.keystore -storetype pkcs12 -alias vanadium -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -validity 10000 -dname "cn=GrapheneOS"
+          # TODO: use Github actions secret
+          export KEY_PASSWORD=password
+          keytool -genkey -v -keystore vanadium.keystore -keypass $KEY_PASSWORD -storepass $KEY_PASSWORD -storetype pkcs12 -alias vanadium -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -validity 10000 -dname "cn=GrapheneOS"
         
       - name: Fetch the Chromium sources
         run: |
           cd Vanadium
+          ls /opt/depot_tools/fetch
           fetch --nohooks android
         
       - name: Build Vanadium
