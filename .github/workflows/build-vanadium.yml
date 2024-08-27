@@ -25,7 +25,7 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          apt install -y python3 git openjdk-8-jre-headless curl wget
+          apt install -y python3 git openjdk-8-jre-headless curl wget bzip2
           
       - name: Install depot_tools
         run: |
@@ -36,7 +36,6 @@ jobs:
         run: |
           git clone https://github.com/GrapheneOS/Vanadium.git
           cd Vanadium
-          # use main branch
           git checkout $VANADIUM_VERSION
           
       - name: Generate a signing key for Vanadium
