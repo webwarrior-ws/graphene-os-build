@@ -60,6 +60,9 @@ jobs:
           export PATH="$PATH:/opt/depot_tools"
           git fetch --tags
           git checkout $CHROMIUM_VERSION
+          # set git credentials so that git doesn't complain
+          git config --global user.email "you@example.com"
+          git config --global user.name "GrapheneOS-builder"
           # Apply the GrapheneOS patches on top of the tagged release
           git am --whitespace=nowarn --keep-non-patch ../patches/*.patch
           # Sync submodules and obtain build dependencies
