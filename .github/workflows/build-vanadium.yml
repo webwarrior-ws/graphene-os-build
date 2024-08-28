@@ -66,10 +66,21 @@ jobs:
           git am --whitespace=nowarn --keep-non-patch ../patches/*.patch
           # Sync submodules and obtain build dependencies
           gclient sync -D --with_branch_heads --with_tags --jobs 32
-          # configure the build in the src directory
-          gn args out/Default
+          # copy build config to the build directory
+          cp ../args.gn out/Default/args.gn
+          # set trichrome_certdigest to the correct value for your generated signing key.
+          TRICHROME_CERTDIGEST=$(keytool -export-cert -alias vanadium -keystore vanadium.keystore | sha256sum)
+          echo "\ntrichrome_certdigest = $TRICHROME_CERTDIGEST" >> out/Default/args.gn
+          # show config
+          cat out/Default/args.gn
+          # Build the components
+          # do we need to build trichrome_webview_64_32_apk?
+          chrt -b 0 autoninja -C out/Default/ trichrome_webview_64_32_apk trichrome_chrome_64_32_apk trichrome_library_64_32_apk vanadium_config_apk
+          # Sign the apks
+          ../generate-release.sh out
           
-          # at this point I'm not sure I understand further build instructions
-          echo "Contents of ../args.gn:"
-          cat ../args.gn
-          
+      - name: Upload APKs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vanadium
+          path: out/Default/apks/release/*.apk
